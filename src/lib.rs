@@ -205,8 +205,30 @@ impl Expr {
     pub fn swap_closed(&self) -> Expr {self.swap(true)}
 
     /// Swap surface and depth levels.
+    ///
+    /// When `closed` is set to `true`,
+    /// the variant Closed Joker Calculus is used.
+    ///
+    /// When `closed` is set to `false`,
+    /// the variant Open Joker Calculus is used.
     pub fn swap(&self, closed: bool) -> Expr {
         sel(self.surface(closed), self.depth(closed)).eval(closed)
+    }
+
+    /// Returns `true` if expression is one-sided with Open Joker Calculus.
+    pub fn one_sided_open(&self) -> bool {self.one_sided(false)}
+    /// Returns `true` if expression is one-sided with Closed Joker Calculus.
+    pub fn one_sided_closed(&self) -> bool {self.one_sided(true)}
+
+    /// Returns `true` if expression is one-sided.
+    ///
+    /// When `closed` is set to `true`,
+    /// the variant Closed Joker Calculus is used.
+    ///
+    /// When `closed` is set to `false`,
+    /// the variant Open Joker Calculus is used.
+    pub fn one_sided(&self, closed: bool) -> bool {
+        self.swap(closed) == self.eval(closed)
     }
 }
 
@@ -358,5 +380,9 @@ mod tests {
 
         let a = seq(sel(seshatism(), platonism()), joker(platonism()));
         assert_eq!(a.swap_open(), sel(platonic(joker(platonism())), seshatic(joker(platonism()))));
+
+        let a = joker(joker(seshatism()));
+        assert_eq!(a.swap_open(), joker(joker(platonism())));
+        assert_eq!(a.swap_closed(), seshatism());
     }
 }
