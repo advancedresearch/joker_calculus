@@ -123,13 +123,13 @@ impl Expr {
         match self {
             _0 => _0,
             _1 => _1,
-            Not(a) => match &**a {
+            Not(a) => match a.eval(closed) {
                 _0 => _1,
                 _1 => _0,
                 Not(_) => not(a.eval(closed)).eval(closed),
-                Jok(b) => joker(not((**b).clone()).eval(closed)),
-                Seq(a, b) => seq(not((**a).clone()), joker((**b).clone())).eval(closed),
-                Sel(a, b) => sel(not((**a).clone()), not((**b).clone())).eval(closed),
+                Jok(b) => joker(not(*b).eval(closed)),
+                Seq(a, b) => seq(not(*a), joker(*b)).eval(closed),
+                Sel(a, b) => sel(not(*a), not(*b)).eval(closed),
             }
             Jok(a) => if closed {
                 match a.eval(closed) {
@@ -295,6 +295,10 @@ mod tests {
         let a = not(not(seshatic(platonism())));
         assert_eq!(a.eval_open(), seshatic(joker(joker(platonism()))));
         assert_eq!(a.eval_closed(), seshatic(platonism()));
+
+        let a = not(seshatic(seshatism()));
+        assert_eq!(a.eval_open(), platonism());
+        assert_eq!(a.eval_closed(), platonism());
     }
 
     #[test]
