@@ -198,6 +198,16 @@ impl Expr {
             x => x,
         }
     }
+
+    /// Swaps surface and depth levels with Open Joker Calculus.
+    pub fn swap_open(&self) -> Expr {self.swap(false)}
+    /// Swaps surface and depth levels with Closed Joker Calculus.
+    pub fn swap_closed(&self) -> Expr {self.swap(true)}
+
+    /// Swap surface and depth levels.
+    pub fn swap(&self, closed: bool) -> Expr {
+        sel(self.surface(closed), self.depth(closed)).eval(closed)
+    }
 }
 
 /// Platonism (terminal expression).
@@ -299,6 +309,10 @@ mod tests {
         let a = not(seshatic(seshatism()));
         assert_eq!(a.eval_open(), platonism());
         assert_eq!(a.eval_closed(), platonism());
+
+        let a = seq(sel(seshatism(), seshatism()), platonism());
+        assert_eq!(a.eval_open(), seshatic(platonism()));
+        assert_eq!(a.eval_closed(), seshatic(platonism()));
     }
 
     #[test]
@@ -314,5 +328,35 @@ mod tests {
         let a = joker(seshatism());
         assert_eq!(a.surface_open(), platonism());
         assert_eq!(a.depth_open(), seshatism());
+    }
+
+    #[test]
+    fn test_swap() {
+        let a = seshatism();
+        assert_eq!(a.swap_open(), seshatism());
+        assert_eq!(a.swap_closed(), seshatism());
+
+        let a = platonism();
+        assert_eq!(a.swap_open(), platonism());
+        assert_eq!(a.swap_closed(), platonism());
+
+        let a = seshatic(platonism());
+        assert_eq!(a.swap_open(), seshatic(platonism()));
+        assert_eq!(a.swap_closed(), seshatic(platonism()));
+
+        let a = joker(seshatism());
+        assert_eq!(a.swap_open(), joker(platonism()));
+        assert_eq!(a.swap_closed(), joker(platonism()));
+
+        let a = sel(seshatic(platonism()), platonic(seshatism()));
+        assert_eq!(a.swap_open(), sel(platonic(seshatism()), seshatic(platonism())));
+        assert_eq!(a.swap_closed(), sel(platonic(seshatism()), seshatic(platonism())));
+
+        let a = not(seshatic(platonism()));
+        assert_eq!(a.swap_open(), platonic(joker(platonism())));
+        assert_eq!(a.swap_closed(), platonic(joker(platonism())));
+
+        let a = seq(sel(seshatism(), platonism()), joker(platonism()));
+        assert_eq!(a.swap_open(), sel(platonic(joker(platonism())), seshatic(joker(platonism()))));
     }
 }
