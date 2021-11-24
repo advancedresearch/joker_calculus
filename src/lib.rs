@@ -230,6 +230,11 @@ impl Expr {
     pub fn one_sided(&self, closed: bool) -> bool {
         self.swap(closed) == self.eval(closed)
     }
+
+    /// Returns `true` if the double-not does not evaluate to itself with Open Joker Calculus.
+    pub fn divergent(&self) -> bool {
+        not(not(self.clone())).eval_open() != self.eval_open()
+    }
 }
 
 /// Platonism (terminal expression).
