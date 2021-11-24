@@ -363,6 +363,9 @@ mod tests {
 
         let a = not(seq(joker(seshatism()), joker(joker(platonism()))));
         assert_eq!(a.eval_closed(), sel(platonic(joker(platonism())), seshatism()));
+
+        let a = seq(joker(seshatism()), joker(seshatism()));
+        assert_eq!(a.eval_closed(), sel(seshatic(joker(seshatism())), platonism()));
     }
 
     #[test]
