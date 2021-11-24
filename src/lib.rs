@@ -147,8 +147,18 @@ impl Expr {
             Seq(a, b) => match (a.eval(closed), b.eval(closed)) {
                 (_0, _0) => _0,
                 (_1, _1) => _1,
-                (_0, x) => seq(_0, x),
-                (_1, x) => seq(_1, x),
+                (_0, x) => {
+                    match x {
+                        Jok(y) if closed && *y == _1 => _0,
+                        _ => seq(_0, x)
+                    }
+                }
+                (_1, x) => {
+                    match x {
+                        Jok(y) if closed && *y == _0 => _1,
+                        _ => seq(_1, x)
+                    }
+                }
                 (Not(_), _) | (_, Not(_)) => unreachable!(),
                 (Jok(x), y) => sel(seq((*x).clone(), y.clone()),
                                    seq(not((*x).clone()), y)).eval(closed),
@@ -340,6 +350,19 @@ mod tests {
         let a = seq(sel(seshatism(), seshatism()), platonism());
         assert_eq!(a.eval_open(), seshatic(platonism()));
         assert_eq!(a.eval_closed(), seshatic(platonism()));
+
+        let a = seshatic(joker(platonism()));
+        assert_eq!(a.eval_open(), seshatic(joker(platonism())));
+        assert_eq!(a.eval_closed(), seshatism());
+
+        let a = not(seshatic(joker(platonism())));
+        assert_eq!(a.eval_closed(), platonism());
+
+        let a = seq(joker(seshatism()), joker(joker(platonism())));
+        assert_eq!(a.eval_closed(), sel(seshatic(platonism()), platonism()));
+
+        let a = not(seq(joker(seshatism()), joker(joker(platonism()))));
+        assert_eq!(a.eval_closed(), sel(platonic(joker(platonism())), seshatism()));
     }
 
     #[test]
