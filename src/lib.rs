@@ -161,7 +161,8 @@ impl Expr {
                         Jok(y) if closed && *y == _1 => _0,
                         Sel(y, z) if closed => {
                             match (*y, *z) {
-                                (Jok(w), _0) | (_0, Jok(w)) if *w == _0 => _0,
+                                (Jok(w), _0) if *w == _0 => _0,
+                                (_0, Jok(w)) if *w == _0 => platonic(_1),
                                 (y, z) => seq(_0, sel(y, z))
                             }
                         }
@@ -173,7 +174,8 @@ impl Expr {
                         Jok(y) if closed && *y == _0 => _1,
                         Sel(y, z) if closed => {
                             match (*y, *z) {
-                                (Jok(w), _1) | (_1, Jok(w)) if *w == _1 => _1,
+                                (Jok(w), _1) if *w == _1 => _1,
+                                (_1, Jok(w)) if *w == _1 => seshatic(_0),
                                 (y, z) => seq(_1, sel(y, z))
                             }
                         }
@@ -413,6 +415,9 @@ mod tests {
 
         let a = seq(joker(platonism()), seshatism());
         assert_eq!(a.eval_closed(), sel(platonic(seshatism()), seshatism()));
+
+        let a = seshatic(sel(seshatism(), joker(seshatism())));
+        assert_eq!(a.eval_closed(), seshatic(platonism()));
     }
 
     #[test]
