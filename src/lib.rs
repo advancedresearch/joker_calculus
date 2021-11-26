@@ -140,6 +140,15 @@ impl Expr {
                 joker(a.eval(closed))
             }
             Sel(a, b) => match (a.eval(closed), b.eval(closed)) {
+                (Seq(x1, x2), _0) if closed && *x1 == _0 =>
+                    seq(_0, sel(*x2, joker(_1))).eval(closed),
+                (_0, Seq(y1, y2)) if closed && *y1 == _0 =>
+                    seq(_0, sel(joker(_1), *y2)).eval(closed),
+                (Seq(x1, x2), _1) if closed && *x1 == _1 =>
+                    seq(_1, sel(*x2, joker(_0))).eval(closed),
+                (_1, Seq(y1, y2)) if closed && *y1 == _1 =>
+                    seq(_1, sel(joker(_0), *y2)).eval(closed),
+                (Seq(x1, x2), Seq(y1, y2)) if x1 == y1 => seq(*x1, sel(*x2, *y2)).eval(closed),
                 (x, y) if x == y => x,
                 (x, y) if not(x.clone()).eval(closed) == y => joker(x.clone()).eval(closed),
                 (x, y) => sel(x, y)
@@ -150,12 +159,24 @@ impl Expr {
                 (_0, x) => {
                     match x {
                         Jok(y) if closed && *y == _1 => _0,
+                        Sel(y, z) if closed => {
+                            match (*y, *z) {
+                                (Jok(w), _0) | (_0, Jok(w)) if *w == _0 => _0,
+                                (y, z) => seq(_0, sel(y, z))
+                            }
+                        }
                         _ => seq(_0, x)
                     }
                 }
                 (_1, x) => {
                     match x {
                         Jok(y) if closed && *y == _0 => _1,
+                        Sel(y, z) if closed => {
+                            match (*y, *z) {
+                                (Jok(w), _1) | (_1, Jok(w)) if *w == _1 => _1,
+                                (y, z) => seq(_1, sel(y, z))
+                            }
+                        }
                         _ => seq(_1, x)
                     }
                 }
@@ -366,6 +387,32 @@ mod tests {
 
         let a = seq(joker(seshatism()), joker(seshatism()));
         assert_eq!(a.eval_closed(), sel(seshatic(joker(seshatism())), platonism()));
+
+        let a = sel(seshatic(joker(seshatism())), seshatic(joker(platonism())));
+        assert_eq!(a.eval_open(), seshatic(joker(joker(seshatism()))));
+        assert_eq!(a.eval_closed(), seshatism());
+
+        let a = sel(seshatic(joker(platonism())), seshatic(joker(seshatism())));
+        assert_eq!(a.eval_open(), seshatic(joker(joker(platonism()))));
+        assert_eq!(a.eval_closed(), seshatic(platonism()));
+
+        let a = sel(seshatic(joker(seshatism())), seshatism());
+        assert_eq!(a.eval_closed(), seshatism());
+
+        let a = sel(seshatic(joker(seshatism())), seshatic(seshatism()));
+        assert_eq!(a.eval_closed(), seshatism());
+
+        let a = seshatic(sel(joker(seshatism()), seshatism()));
+        assert_eq!(a.eval_closed(), seshatism());
+
+        let a = sel(joker(seshatism()), seshatism());
+        assert_eq!(a.eval_closed(), sel(joker(seshatism()), seshatism()));
+
+        let a = seq(joker(seshatism()), platonism());
+        assert_eq!(a.eval_closed(), sel(seshatic(platonism()), platonism()));
+
+        let a = seq(joker(platonism()), seshatism());
+        assert_eq!(a.eval_closed(), sel(platonic(seshatism()), seshatism()));
     }
 
     #[test]
