@@ -158,6 +158,7 @@ impl Expr {
                 (_1, _1) => _1,
                 (_0, x) => {
                     match x {
+                        Seq(x, y) if *x == _0 => seq(_0, *y),
                         Jok(y) if closed && *y == _1 => _0,
                         Sel(y, z) if closed => {
                             match (*y, *z) {
@@ -171,6 +172,7 @@ impl Expr {
                 }
                 (_1, x) => {
                     match x {
+                        Seq(x, y) if *x == _1 => seq(_1, *y),
                         Jok(y) if closed && *y == _0 => _1,
                         Sel(y, z) if closed => {
                             match (*y, *z) {
@@ -418,6 +420,18 @@ mod tests {
 
         let a = seshatic(sel(seshatism(), joker(seshatism())));
         assert_eq!(a.eval_closed(), seshatic(platonism()));
+
+        let a = seshatic(seshatic(platonism()));
+        assert_eq!(a.eval_open(), seshatic(platonism()));
+        assert_eq!(a.eval_closed(), seshatic(platonism()));
+
+        let a = seshatic(seshatic(seshatism()));
+        assert_eq!(a.eval_open(), seshatism());
+        assert_eq!(a.eval_closed(), seshatism());
+
+        let a = seshatic(sel(seshatic(platonism()), seshatic(joker(seshatism()))));
+        assert_eq!(a.eval_open(), seshatic(sel(platonism(), joker(seshatism()))));
+        assert_eq!(a.eval_closed(), seshatic(sel(platonism(), joker(seshatism()))));
     }
 
     #[test]
