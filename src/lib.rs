@@ -131,15 +131,17 @@ impl Expr {
                 Seq(a, b) => seq(not(*a), joker(*b)).eval(closed),
                 Sel(a, b) => sel(not(*a), not(*b)).eval(closed),
             }
-            Jok(a) => if closed {
-                match a.eval(closed) {
-                    Jok(a) => *a,
-                    a => joker(a)
+            Jok(a) => match a.eval(closed) {
+                Jok(x) if closed => *x,
+                Sel(x, y) => match (*x, *y) {
+                    (a, Jok(b)) if closed => sel(joker(a), *b).eval(closed),
+                    (Jok(a), b) if closed => sel(*a, joker(b)).eval(closed),
+                    (a, b) => joker(sel(a, b)),
                 }
-            } else {
-                joker(a.eval(closed))
+                x => joker(x)
             }
             Sel(a, b) => match (a.eval(closed), b.eval(closed)) {
+                (Jok(x), Jok(y)) => joker(sel(*x, *y)).eval(closed),
                 (Seq(x1, x2), _0) if closed && *x1 == _0 =>
                     seq(_0, sel(*x2, joker(_1))).eval(closed),
                 (_0, Seq(y1, y2)) if closed && *y1 == _0 =>
@@ -357,6 +359,7 @@ mod tests {
 
         let a = sel(joker(seshatism()), joker(platonism()));
         assert_eq!(a.eval_open(), joker(joker(seshatism())));
+        assert_eq!(a.eval_closed(), seshatism());
 
         let a = sel(platonism(), joker(seshatism()));
         assert_eq!(a.eval_open(), sel(platonism(), joker(seshatism())));
@@ -431,6 +434,26 @@ mod tests {
 
         let a = seshatic(sel(seshatic(platonism()), seshatic(joker(seshatism()))));
         assert_eq!(a.eval_open(), seshatic(sel(platonism(), joker(seshatism()))));
+        assert_eq!(a.eval_closed(), seshatic(sel(platonism(), joker(seshatism()))));
+
+        let a = sel(not(seshatic(platonism())), not(seshatic(joker(seshatism()))));
+        assert_eq!(a.eval_open(), platonic(joker(sel(platonism(), joker(seshatism())))));
+        assert_eq!(a.eval_closed(), platonic(sel(joker(platonism()), seshatism())));
+
+        let a = joker(sel(platonism(), joker(seshatism())));
+        assert_eq!(a.eval_open(), joker(sel(platonism(), joker(seshatism()))));
+        assert_eq!(a.eval_closed(), sel(joker(platonism()), seshatism()));
+
+        let a = platonic(joker(sel(platonism(), joker(seshatism()))));
+        assert_eq!(a.eval_open(), platonic(joker(sel(platonism(), joker(seshatism())))));
+        assert_eq!(a.eval_closed(), platonic(sel(joker(platonism()), seshatism())));
+
+        let a = not(seshatic(sel(platonism(), joker(seshatism()))));
+        assert_eq!(a.eval_open(), platonic(joker(sel(platonism(), joker(seshatism())))));
+        assert_eq!(a.eval_closed(), platonic(sel(joker(platonism()), seshatism())));
+
+        let a = not(not(seshatic(sel(platonism(), joker(seshatism())))));
+        assert_eq!(a.eval_open(), seshatic(joker(joker(sel(platonism(), joker(seshatism()))))));
         assert_eq!(a.eval_closed(), seshatic(sel(platonism(), joker(seshatism()))));
     }
 
