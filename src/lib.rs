@@ -319,6 +319,22 @@ pub fn sel<T: Into<Expr>, U: Into<Expr>>(a: T, b: U) -> Expr {
     Sel(Box::new(a.into()), Box::new(b.into()))
 }
 
+/// Shorthand syntax for Joker Calculus expression.
+#[macro_export]
+macro_rules! jc (
+    ( 0 ) => {platonism()};
+    ( 1 ) => {seshatism()};
+    ( ? $($x:tt)+ ) => {joker(jc!($($x)+))};
+    ( 0 $($x:tt)+ ) => {platonic(jc!($($x)+))};
+    ( 1 $($x:tt)+ ) => {seshatic(jc!($($x)+))};
+    ( ( 0 , $($x:tt)+ ) ) => {sel(platonism(), jc!($($x)+))};
+    ( ( 1 , $($x:tt)+ ) ) => {sel(seshatism(), jc!($($x)+))};
+    ( ( 0 $x:tt , $($y:tt)+ ) ) => {sel(platonic(jc!($x)), jc!($($y)+))};
+    ( ( 1 $x:tt , $($y:tt)+ ) ) => {sel(seshatic(jc!($x)), jc!($($y)+))};
+    ( ( 0 ? $x:tt , $($y:tt)+ ) ) => {sel(platonic(joker(jc!($x))), jc!($($y)+))};
+    ( ( 1 ? $x:tt , $($y:tt)+ ) ) => {sel(seshatic(joker(jc!($x))), jc!($($y)+))};
+);
+
 #[cfg(test)]
 mod tests {
     use super::*;
