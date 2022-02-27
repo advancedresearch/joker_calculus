@@ -353,6 +353,7 @@ macro_rules! jc (
     ( 0 ) => {platonism()};
     ( 1 ) => {seshatism()};
     ( ? $($x:tt)+ ) => {joker(jc!($($x)+))};
+    ( ! $($x:tt)+ ) => {not(jc!($($x)+))};
     ( 0 $($x:tt)+ ) => {platonic(jc!($($x)+))};
     ( 1 $($x:tt)+ ) => {seshatic(jc!($($x)+))};
     ( ( 0 , $($x:tt)+ ) ) => {sel(platonism(), jc!($($x)+))};
@@ -361,6 +362,8 @@ macro_rules! jc (
     ( ( 1 $x:tt , $($y:tt)+ ) ) => {sel(seshatic(jc!($x)), jc!($($y)+))};
     ( ( 0 ? $x:tt , $($y:tt)+ ) ) => {sel(platonic(joker(jc!($x))), jc!($($y)+))};
     ( ( 1 ? $x:tt , $($y:tt)+ ) ) => {sel(seshatic(joker(jc!($x))), jc!($($y)+))};
+    ( ( 0 ! $x:tt , $($y:tt)+ ) ) => {sel(platonic(not(jc!($x))), jc!($($y)+))};
+    ( ( 1 ! $x:tt , $($y:tt)+ ) ) => {sel(seshatic(not(jc!($x))), jc!($($y)+))};
 );
 
 #[cfg(test)]
