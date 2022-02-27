@@ -272,6 +272,22 @@ impl Expr {
     pub fn divergent(&self) -> bool {
         not(not(self.clone())).eval_open() != self.eval_open()
     }
+
+    /// Returns `true` if the expression is contracting with Open Joker Calculus.
+    pub fn contracting_open(&self) -> bool {self.contracting(false)}
+    /// Returns `true` if the expression is contracting with Closed Joker Calculus.
+    pub fn contracting_closed(&self) -> bool {self.contracting(true)}
+
+    /// Returns `true` if the sequence repetition of itself evaluates to itself.
+    ///
+    /// When `closed` is set to `true`,
+    /// the variant Closed Joker Calculus is used.
+    ///
+    /// When `closed` is set to `false`,
+    /// the variant Open Joker Calculus is used.
+    pub fn contracting(&self, closed: bool) -> bool {
+        seq(self.clone(), self.clone()).eval(closed) == self.eval(closed)
+    }
 }
 
 /// Platonism (terminal expression).
