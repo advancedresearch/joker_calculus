@@ -87,6 +87,8 @@
 //! }
 //! ```
 
+use std::fmt;
+
 use Expr::*;
 
 /// Stores a Joker Calculus expression.
@@ -104,6 +106,32 @@ pub enum Expr {
     Not(Box<Expr>),
     /// Joker expression.
     Jok(Box<Expr>),
+}
+
+impl fmt::Display for Expr {
+    fn fmt(&self, w: &mut fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        match self {
+            _0 => write!(w, "0")?,
+            _1 => write!(w, "1")?,
+            Seq(a, b) => write!(w, "{} {}", a, b)?,
+            Sel(a, b) => write!(w, "({}, {})", a, b)?,
+            Jok(a) => {
+                if let Seq(_, _) = &**a {
+                    write!(w, "?({})", a)?;
+                } else {
+                    write!(w, "?{}", a)?;
+                }
+            }
+            Not(a) => {
+                if let Seq(_, _) = &**a {
+                    write!(w, "!({})", a)?;
+                } else {
+                    write!(w, "!{}", a)?;
+                }
+            }
+        }
+        Ok(())
+    }
 }
 
 impl Expr {
