@@ -352,18 +352,16 @@ pub fn sel<T: Into<Expr>, U: Into<Expr>>(a: T, b: U) -> Expr {
 macro_rules! jc (
     ( 0 ) => {platonism()};
     ( 1 ) => {seshatism()};
+    ( $x:tt , $($y:tt)+ ) => {sel(jc!($x), jc!($($y)+))};
+    ( $x0:tt $x1:tt , $($y:tt)+ ) => {sel(jc!($x0 $x1), jc!($($y)+))};
+    ( $x0:tt $x1:tt $x2:tt , $($y:tt)+ ) => {sel(jc!($x0 $x1 $x2), jc!($($y)+))};
+    ( $x0:tt $x1:tt $x2:tt $x3:tt , $($y:tt)+ ) => {sel(jc!($x0 $x1 $x2 $x3), jc!($($y)+))};
+    ( ( $($x:tt)+ ) $($y:tt)+ ) => {seq(jc!($($x)+), jc!($($y)+))};
+    ( ( $($x:tt)+ ) ) => {jc!($($x)+)};
     ( ? $($x:tt)+ ) => {joker(jc!($($x)+))};
     ( ! $($x:tt)+ ) => {not(jc!($($x)+))};
     ( 0 $($x:tt)+ ) => {platonic(jc!($($x)+))};
     ( 1 $($x:tt)+ ) => {seshatic(jc!($($x)+))};
-    ( ( 0 , $($x:tt)+ ) ) => {sel(platonism(), jc!($($x)+))};
-    ( ( 1 , $($x:tt)+ ) ) => {sel(seshatism(), jc!($($x)+))};
-    ( ( 0 $x:tt , $($y:tt)+ ) ) => {sel(platonic(jc!($x)), jc!($($y)+))};
-    ( ( 1 $x:tt , $($y:tt)+ ) ) => {sel(seshatic(jc!($x)), jc!($($y)+))};
-    ( ( 0 ? $x:tt , $($y:tt)+ ) ) => {sel(platonic(joker(jc!($x))), jc!($($y)+))};
-    ( ( 1 ? $x:tt , $($y:tt)+ ) ) => {sel(seshatic(joker(jc!($x))), jc!($($y)+))};
-    ( ( 0 ! $x:tt , $($y:tt)+ ) ) => {sel(platonic(not(jc!($x))), jc!($($y)+))};
-    ( ( 1 ! $x:tt , $($y:tt)+ ) ) => {sel(seshatic(not(jc!($x))), jc!($($y)+))};
 );
 
 #[cfg(test)]
@@ -567,5 +565,50 @@ mod tests {
         let a = joker(joker(seshatism()));
         assert_eq!(a.swap_open(), joker(joker(platonism())));
         assert_eq!(a.swap_closed(), seshatism());
+    }
+
+    #[test]
+    fn test_macro() {
+        let a = jc!(0);
+        assert_eq!(a, platonism());
+
+        let a = jc!(1);
+        assert_eq!(a, seshatism());
+
+        let a = jc!(0 1);
+        assert_eq!(a, platonic(seshatism()));
+
+        let a = jc!(0, 1);
+        assert_eq!(a, sel(platonism(), seshatism()));
+
+        let a = jc!((0, 1));
+        assert_eq!(a, sel(platonism(), seshatism()));
+
+        let a = jc!(?0);
+        assert_eq!(a, joker(platonism()));
+
+        let a = jc!(0 ?0);
+        assert_eq!(a, platonic(joker(platonism())));
+
+        let a = jc!(?(0 1));
+        assert_eq!(a, joker(platonic(seshatism())));
+
+        let a = jc!(?(0, 1));
+        assert_eq!(a, joker(sel(platonism(), seshatism())));
+
+        let a = jc!(?0, !0);
+        assert_eq!(a, sel(joker(platonism()), not(platonism())));
+
+        let a = jc!(0 ?1, 0);
+        assert_eq!(a, sel(platonic(joker(seshatism())), platonism()));
+
+        let a = jc!(0 !1, 0);
+        assert_eq!(a, sel(platonic(not(seshatism())), platonism()));
+
+        let a = jc!(0 (1, 0));
+        assert_eq!(a, platonic(sel(seshatism(), platonism())));
+
+        let a = jc!((0, 1) (1, 0));
+        assert_eq!(a, seq(sel(platonism(), seshatism()), sel(seshatism(), platonism())));
     }
 }
