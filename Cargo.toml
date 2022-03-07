@@ -1,6 +1,6 @@
 [package]
 name = "joker_calculus"
-version = "0.7.0"
+version = "0.7.1"
 edition = "2021"
 authors = ["Sven Nilsen <bvssvni@gmail.com>"]
 keywords = ["joker", "calculus", "logic", "philosophy", "advancedresearch"]
