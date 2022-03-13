@@ -88,6 +88,7 @@
 //! ```
 
 use std::fmt;
+use std::cmp;
 
 use Expr::*;
 
@@ -106,6 +107,85 @@ pub enum Expr {
     Not(Box<Expr>),
     /// Joker expression.
     Jok(Box<Expr>),
+}
+
+impl cmp::PartialOrd for Expr {
+    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
+        fn seq_jok(x: &Expr, y: &Expr, v: &Expr, v2: &Expr) -> bool {
+            match (x, y) {
+                (Seq(x, x2), Jok(y)) =>
+                    if &**x == v && &**y == v {
+                        if &**x2 == v2 {true}
+                        else {false}
+                    } else {false},
+                _ => false
+            }
+        }
+
+        use cmp::Ordering::*;
+
+        match (self, other) {
+            (x, y) if x == y => Some(Equal),
+            (_0, _1) => Some(Less),
+            (_1, _0) => Some(Greater),
+            (Jok(x), Jok(y)) => x.partial_cmp(y),
+            (_0, Jok(y)) if **y == _0 => Some(Less),
+            (Jok(x), _0) if **x == _0 => Some(Greater),
+            (_1, Jok(y)) if **y == _1 => Some(Greater),
+            (Jok(x), _1) if **x == _1 => Some(Less),
+            (x, y) if seq_jok(x, y, &_0, &joker(_0)) => Some(Less),
+            (x, y) if seq_jok(y, x, &_0, &joker(_0)) => Some(Greater),
+            (x, y) if seq_jok(x, y, &_1, &joker(_1)) => Some(Greater),
+            (x, y) if seq_jok(y, x, &_1, &joker(_1)) => Some(Less),
+            (x, y) if seq_jok(x, y, &_0, &_1) => Some(Greater),
+            (x, y) if seq_jok(y, x, &_0, &_1) => Some(Less),
+            (x, y) if seq_jok(x, y, &_1, &_0) => Some(Less),
+            (x, y) if seq_jok(y, x, &_1, &_0) => Some(Greater),
+            (_0, Seq(x, x2)) if **x == _1 && **x2 == _0 => Some(Less),
+            (Seq(x, x2), _0) if **x == _1 && **x2 == _0 => Some(Greater),
+            (_1, Seq(x, x2)) if **x == _0 && **x2 == _1 => Some(Greater),
+            (Seq(x, x2), _1) if **x == _0 && **x2 == _1 => Some(Less),
+            (Jok(x), _1) if **x == _0 => Some(Less),
+            (_1, Jok(x)) if **x == _0 => Some(Greater),
+            (_0, Jok(x)) if **x == _1 => Some(Less),
+            (Jok(x), _0) if **x == _1 => Some(Greater),
+            (_0, Seq(x, x2)) if **x == _0 && **x2 == joker(_0) => Some(Less),
+            (Seq(x, x2), _0) if **x == _0 && **x2 == joker(_0) => Some(Greater),
+            (_1, Seq(x, x2)) if **x == _1 && **x2 == joker(_1) => Some(Greater),
+            (Seq(x, x2), _1) if **x == _1 && **x2 == joker(_1) => Some(Less),
+            (Seq(x, x2), Jok(y)) if **x == _0 && **x2 == joker(_0) && **y == _1 => Some(Less),
+            (Jok(y), Seq(x, x2)) if **x == _0 && **x2 == joker(_0) && **y == _1 => Some(Greater),
+            (Seq(x, x2), _1) if **x == _0 && **x2 == joker(_0) => Some(Less),
+            (_1, Seq(x, x2)) if **x == _0 && **x2 == joker(_0) => Some(Greater),
+            (_0, Seq(x, x2)) if **x == _1 && **x2 == joker(_1) => Some(Less),
+            (Seq(x, x2), _0) if **x == _1 && **x2 == joker(_1) => Some(Greater),
+            (_0, Seq(x, x2)) if **x == _0 && **x2 == _1 => Some(Less),
+            (Seq(x, x2), _0) if **x == _0 && **x2 == _1 => Some(Greater),
+            (_1, Seq(x, x2)) if **x == _1 && **x2 == _0 => Some(Greater),
+            (Seq(x, x2), _1) if **x == _1 && **x2 == _0 => Some(Less),
+            (Seq(x, x2), Seq(y, y2))
+                if **x == _0 && **x2 == joker(_0) &&
+                   **y == _1 && **y2 == joker(_1) => Some(Less),
+            (Seq(x, x2), Seq(y, y2))
+                if **x == _1 && **x2 == joker(_1) &&
+                   **y == _0 && **y2 == joker(_0) => Some(Greater),
+            (Seq(x, x2), Seq(y, y2))
+                if **x == _0 && **x2 == joker(_0) &&
+                   **y == _0 && **y2 == _1 => Some(Less),
+            (Seq(x, x2), Seq(y, y2))
+                if **x == _0 && **x2 == _1 &&
+                   **y == _0 && **y2 == joker(_0) => Some(Greater),
+            (Seq(x, x2), Seq(y, y2))
+                if **x == _1 && **x2 == _0 &&
+                   **y == _1 && **y2 == joker(_1) => Some(Less),
+            (Seq(x, x2), Seq(y, y2))
+                if **x == _1 && **x2 == joker(_1) &&
+                   **y == _1 && **y2 == _0 => Some(Greater),
+            (Jok(x), Seq(y, y2)) if **x == _0 && **y == _1 && **y2 == joker(_1) => Some(Less),
+            (Seq(y, y2), Jok(x)) if **x == _0 && **y == _1 && **y2 == joker(_1) => Some(Greater),
+            _ => None,
+        }
+    }
 }
 
 impl fmt::Display for Expr {
@@ -610,5 +690,23 @@ mod tests {
 
         let a = jc!((0, 1) (1, 0));
         assert_eq!(a, seq(sel(platonism(), seshatism()), sel(seshatism(), platonism())));
+    }
+
+    #[test]
+    fn test_order() {
+        fn check_order(order: &[Expr]) {
+            for i in 0..order.len() {
+                for j in i+1..order.len() {
+                    assert!(order[i] < order[j], "{} < {}", order[i], order[j]);
+                    assert!(order[j] > order[i], "{} > {}", order[j], order[i]);
+                }
+            }
+        }
+
+        check_order(&[jc!(0), jc!(0 ?0), jc!(?0), jc!(?1), jc!(1 ?1), jc!(1)]);
+        check_order(&[jc!(0), jc!(0 ?0), jc!(?0), jc!(0 1)]);
+        check_order(&[jc!(1 0), jc!(?1), jc!(1 ?1), jc!(1)]);
+        check_order(&[jc!(0), jc!(1 0)]);
+        check_order(&[jc!(0 1), jc!(1)]);
     }
 }
