@@ -396,6 +396,22 @@ impl Expr {
     pub fn contracting(&self, closed: bool) -> bool {
         seq(self.clone(), self.clone()).eval(closed) == self.eval(closed)
     }
+
+    /// Returns `true` if expression contains a joker.
+    pub fn contains_joker(&self) -> bool {
+        match self {
+            _1 | _0 => false,
+            Jok(_) => true,
+            Seq(a, b) | Sel(a, b) => a.contains_joker() || b.contains_joker(),
+            Not(a) => a.contains_joker(),
+        }
+    }
+
+    /// Returns `true` if expression is "authentic" in sense of Heidegger.
+    ///
+    /// This is defined as the evaluated expression in Closed Joker Calculus
+    /// does not contain a joker.
+    pub fn authentic(&self) -> bool {!self.eval_closed().contains_joker()}
 }
 
 /// Platonism (terminal expression).
