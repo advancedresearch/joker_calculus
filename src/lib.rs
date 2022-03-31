@@ -628,6 +628,21 @@ mod tests {
     }
 
     #[test]
+    fn test_joker_ambiguity() {
+        let a = jc!(0, 1);
+        assert_eq!(a.eval_closed(), jc!(?0));
+        assert_eq!(a.eval_open(), jc!(?0));
+
+        let a = jc!(0, 1 ?0);
+        assert_eq!(a.eval_closed(), jc!(?0));
+        assert_eq!(a.eval_open(), jc!(0, 1 ?0));
+
+        let a = jc!(!(1 ?1), 1 ?1);
+        assert_eq!(a.eval_closed(), jc!(?(0 1)));
+        assert_eq!(a.eval_open(), jc!(0 ??1, 1 ?1));
+    }
+
+    #[test]
     fn test_depth_surface() {
         let a = seshatism();
         assert_eq!(a.surface_open(), seshatism());
