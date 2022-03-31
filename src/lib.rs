@@ -376,25 +376,32 @@ impl Expr {
         self.swap(closed) == self.eval(closed)
     }
 
-    /// Returns `true` if the double-not does not evaluate to itself with Open Joker Calculus.
-    pub fn divergent(&self) -> bool {
-        not(not(self.clone())).eval_open() != self.eval_open()
-    }
+    /// Returns `true` if expression is two-sided with Open Joker Calculus.
+    pub fn two_sided_open(&self) -> bool {self.two_sided(false)}
+    /// Returns `true` if expression is two-sided with Closed Joker Calculus.
+    pub fn two_sided_closed(&self) -> bool {self.two_sided(true)}
 
-    /// Returns `true` if the expression is contracting with Open Joker Calculus.
-    pub fn contracting_open(&self) -> bool {self.contracting(false)}
-    /// Returns `true` if the expression is contracting with Closed Joker Calculus.
-    pub fn contracting_closed(&self) -> bool {self.contracting(true)}
-
-    /// Returns `true` if the sequence repetition of itself evaluates to itself.
+    /// Returns `true` if expression is two-sided.
     ///
     /// When `closed` is set to `true`,
     /// the variant Closed Joker Calculus is used.
     ///
     /// When `closed` is set to `false`,
     /// the variant Open Joker Calculus is used.
-    pub fn contracting(&self, closed: bool) -> bool {
-        seq(self.clone(), self.clone()).eval(closed) == self.eval(closed)
+    pub fn two_sided(&self, closed: bool) -> bool {
+        !self.one_sided(closed)
+    }
+
+    /// Returns `true` if the double-not does not evaluate to itself with Open Joker Calculus.
+    pub fn divergent(&self) -> bool {
+        not(not(self.clone())).eval_open() != self.eval_open()
+    }
+
+    /// Returns `true` if the sequence repetition of itself evaluates to itself in Closed variant.
+    ///
+    /// There are no contracting expressions in the Open variant.
+    pub fn contracting(&self) -> bool {
+        seq(self.clone(), self.clone()).eval_closed() == self.eval_closed()
     }
 
     /// Returns `true` if expression contains a joker.
