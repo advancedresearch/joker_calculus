@@ -107,6 +107,8 @@ pub enum Expr {
     Not(Box<Expr>),
     /// Joker expression.
     Jok(Box<Expr>),
+    /// Identity expression.
+    Id(Box<Expr>),
 }
 
 impl cmp::PartialOrd for Expr {
@@ -193,6 +195,7 @@ impl fmt::Display for Expr {
         match self {
             _0 => write!(w, "0")?,
             _1 => write!(w, "1")?,
+            Id(a) => write!(w, "id({})", a)?,
             Seq(a, b) => write!(w, "{} {}", a, b)?,
             Sel(a, b) => write!(w, "({}, {})", a, b)?,
             Jok(a) => {
@@ -231,6 +234,7 @@ impl Expr {
         match self {
             _0 => _0,
             _1 => _1,
+            Id(a) => a.eval(closed),
             Not(a) => match a.eval(closed) {
                 _0 => _1,
                 _1 => _0,
@@ -238,6 +242,7 @@ impl Expr {
                 Jok(b) => joker(not(*b).eval(closed)),
                 Seq(a, b) => seq(not(*a), joker(*b)).eval(closed),
                 Sel(a, b) => sel(not(*a), not(*b)).eval(closed),
+                Id(_) => unreachable!(),
             }
             Jok(a) => match a.eval(closed) {
                 Jok(x) if closed => *x,
@@ -295,7 +300,8 @@ impl Expr {
                         _ => seq(_1, x)
                     }
                 }
-                (Not(_), _) | (_, Not(_)) => unreachable!(),
+                (Not(_), _) | (_, Not(_)) |
+                (Id(_), _) | (_, Id(_)) => unreachable!(),
                 (Jok(x), y) => sel(seq((*x).clone(), y.clone()),
                                    seq(not((*x).clone()), y)).eval(closed),
                 (Sel(a, b), c) => sel(seq((*a).clone(), c.clone()),
@@ -411,7 +417,7 @@ impl Expr {
             _1 | _0 => false,
             Jok(_) => true,
             Seq(a, b) | Sel(a, b) => a.contains_joker() || b.contains_joker(),
-            Not(a) => a.contains_joker(),
+            Not(a) | Id(a) => a.contains_joker(),
         }
     }
 
@@ -420,6 +426,99 @@ impl Expr {
     /// This is defined as the evaluated expression in Closed Joker Calculus
     /// does not contain a joker.
     pub fn authentic(&self) -> bool {!self.eval_closed().contains_joker()}
+
+    // Gets Nth layer in branching index space (Used by `layers`).
+    fn layer(&self, n: usize) -> Option<Self> {
+        match self {
+            Jok(a) => {
+                if n % 2 == 0 {return a.layer(n >> 1)}
+                else {return not((**a).clone()).layer((n - 1) >> 1)}
+            }
+            Sel(a, b) => {
+                if n % 2 == 0 {return a.layer(n >> 1)}
+                else {return b.layer((n - 1) >> 1)}
+            }
+            Seq(a, b) => {
+                return Some(seq((**a).clone(), b.layer(n)?))
+            }
+            _0 | _1 | Not(_) | Id(_) => {
+                if n > 0 {None}
+                else {Some(self.clone())}
+            }
+        }
+    }
+
+    /// Gets the layers, unevaluated.
+    ///
+    /// Terminates on `not` or `id`.
+    pub fn layers(&self) -> Vec<Self> {
+        let mut res = vec![];
+        let mut i = 0;
+        while let Some(dim) = self.layer(i) {
+            res.push(dim);
+            i += 1;
+        }
+        fix_layer_order(&mut res);
+        res
+    }
+
+    /// Gets a unary dimension.
+    ///
+    /// This uses a trick where nested `not`s are interpreted
+    /// as a unary successor that inverts into a higher dimensional language
+    /// using the binary representation of the dimension.
+    ///
+    /// Is used to encode higher dimensional languages.
+    pub fn unary_dimension(&self, dim: usize) -> Option<Self> {
+        let mut expr = self;
+        let mut found = 0;
+        while let Not(a) = expr {
+            expr = a;
+            found += 1;
+        }
+        if found < (1 << dim) {
+            if dim == 0 {return Some(self.clone())}
+            None
+        }
+        else if (found >> dim) & 1 == 1 {
+            Some(not(expr.clone()))
+        } else {
+            Some(expr.clone())
+        }
+    }
+
+    /// Gets unary dimensions.
+    ///
+    /// For more information, see `unary_dimension`.
+    pub fn unary_dimensions(&self) -> Vec<Self> {
+        let mut res = vec![];
+        let mut i = 0;
+        while let Some(dim) = self.unary_dimension(i) {
+            res.push(dim);
+            i += 1;
+        }
+        res
+    }
+}
+
+/// Fixes layer order.
+fn fix_layer_order(v: &mut Vec<Expr>) {
+    let bits = {
+        let mut x = 0;
+        while v.len() > (1 << x) {x += 1}
+        x
+    };
+    if bits == 0 {return};
+
+    let mut g: Vec<usize> = (0..v.len()).collect();
+    for i in &mut g {
+        *i = i.reverse_bits() >> (usize::BITS - bits);
+    }
+    for n in 0..g.len() {
+        let j = g[n];
+        v.swap(n, j);
+        g.swap(n, j);
+    }
 }
 
 /// Platonism (terminal expression).
@@ -451,11 +550,17 @@ pub fn sel<T: Into<Expr>, U: Into<Expr>>(a: T, b: U) -> Expr {
     Sel(Box::new(a.into()), Box::new(b.into()))
 }
 
+/// Identity expression.
+pub fn id<T: Into<Expr>>(a: T) -> Expr {
+    Id(Box::new(a.into()))
+}
+
 /// Shorthand syntax for Joker Calculus expression.
 #[macro_export]
 macro_rules! jc (
     ( 0 ) => {platonism()};
     ( 1 ) => {seshatism()};
+    ( id ( $($x:tt)+ ) ) => {id(jc!($($x)+))};
     ( $x:tt , $($y:tt)+ ) => {sel(jc!($x), jc!($($y)+))};
     ( $x0:tt $x1:tt , $($y:tt)+ ) => {sel(jc!($x0 $x1), jc!($($y)+))};
     ( $x0:tt $x1:tt $x2:tt , $($y:tt)+ ) => {sel(jc!($x0 $x1 $x2), jc!($($y)+))};
@@ -752,5 +857,56 @@ mod tests {
         check_order(&[jc!(1 0), jc!(?1), jc!(1 ?1), jc!(1)]);
         check_order(&[jc!(0), jc!(1 0)]);
         check_order(&[jc!(0 1), jc!(1)]);
+    }
+
+    #[test]
+    fn test_unary_dimension() {
+        let a = jc!(0);
+        assert_eq!(a.unary_dimensions(), vec![jc!(0)]);
+
+        let a = jc!(!0);
+        assert_eq!(a.unary_dimensions(), vec![jc!(!0)]);
+
+        let a = jc!(!!0);
+        assert_eq!(a.unary_dimensions(), vec![jc!(0), jc!(!0)]);
+
+        let a = jc!(!!!0);
+        assert_eq!(a.unary_dimensions(), vec![jc!(!0), jc!(!0)]);
+
+        let a = jc!(!!!!0);
+        assert_eq!(a.unary_dimensions(), vec![jc!(0), jc!(0), jc!(!0)]);
+
+        let a = jc!(!!!!!0);
+        assert_eq!(a.unary_dimensions(), vec![jc!(!0), jc!(0), jc!(!0)]);
+
+        let a = jc!(!!!!!(0 1));
+        assert_eq!(a.unary_dimensions(), vec![jc!(!(0 1)), jc!(0 1), jc!(!(0 1))]);
+    }
+
+    #[test]
+    fn test_layers() {
+        let a = jc!(0, 1);
+        assert_eq!(a.layers(), vec![jc!(0), jc!(1)]);
+
+        let a = jc!((0, 1 0), (0 1, 1 1));
+        assert_eq!(a.layers(), vec![jc!(0), jc!(1 0), jc!(0 1), jc!(1 1)]);
+
+        let a = jc!(!0, !1);
+        assert_eq!(a.layers(), vec![jc!(!0), jc!(!1)]);
+
+        let a = jc!(!!0, !!1);
+        assert_eq!(a.layers(), vec![jc!(!!0), jc!(!!1)]);
+
+        let a = jc!(?0);
+        assert_eq!(a.layers(), vec![jc!(0), jc!(!0)]);
+
+        let a = jc!(1 ?0);
+        assert_eq!(a.layers(), vec![jc!(1 0), jc!(1 !0)]);
+
+        let a = jc!(!?0);
+        assert_eq!(a.layers(), vec![jc!(!?0)]);
+
+        let a = jc!(id((0, 1)));
+        assert_eq!(a.layers(), vec![jc!(id((0, 1)))]);
     }
 }
