@@ -48,7 +48,7 @@ These operators are used to build more complex expressions, such as:
 1 ?0 = 1 (in Closed variant) = Something who stands for 0 but "embraces" 1
 ```
 
-This also allows expression positions that are co-dependingly "stuck in inauthenticity":
+This also allows expressing positions that are co-dependingly "stuck in inauthenticity":
 
 ```text
 !(1 0) = 0 ?0 = Something who stands for 0 but "can not perceive itself from" 1
