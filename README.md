@@ -44,15 +44,15 @@ There is also a perspective operator:
 These operators are used to build more complex expressions, such as:
 
 ```
-0 ?1 = 0 (in Closed Variant) = Somebody who stands for 1 but "embraces" 0
+0 ?1 = 0 (in Closed Variant) = Something who stands for 1 but "embraces" 0
 1 ?0 = 1 (in Closed variant) = Something who stands for 0 but "embraces" 1
 ```
 
 This also allows expression positions that are co-dependingly "stuck in inauthenticity":
 
 ```text
-!(1 0) = 0 ?0 = Somebody who "oppresses" `1 ?1`
-!(0 1) = 1 ?1 = Somebody who are "oppressed by" `0 ?0`
+!(1 0) = 0 ?0 = Something who stands for 0 but "can not perceive itself from" 1
+!(0 1) = 1 ?1 = Something who stands for 1 but "can not perceive itself from" 0
 ```
 
 ### Example: Hello Joker
