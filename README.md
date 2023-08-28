@@ -10,6 +10,51 @@ by Daniel Fischer, William Alexander Morris and Sven Nilsen (2021).
 
 *Plato, an influential figure in Western philosophy. [Source](https://en.wikipedia.org/wiki/Platonism#/media/File:Head_Platon_Glyptothek_Munich_548.jpg)*
 
+### Introduction
+
+Joker Calculus is used to describe language bias in philosophical positions.
+
+You can think of Joker Calculus as extending bits with two modes of evaluation (Open and Closed):
+
+```text
+0 = Platonism
+1 = Seshatism
+
+!0 = 1 (in both Open and Closed variant)
+!1 = 0 (in both Open and Closed variant)
+```
+
+There is a "Joker" operator `?`:
+
+```text
+?0 = (0, 1) = Something that appears to be 1 but actually is 0
+?1 = (1, 0) = Something that appears to be 0 but actually is 1
+
+(0, 0) = 0
+(1, 1) = 1
+```
+
+There is also a perspective operator:
+
+```text
+0 1 = Something that is like 1 but seen from the perspective of 0
+1 0 = Something that is like 0 but seen from the perspective of 1
+```
+
+These operators are used to build more complex expressions, such as:
+
+```
+0 ?1 = 0 (in Closed Variant) = Somebody who stands for 1 but "embraces" 0
+1 ?0 = 1 (in Closed variant) = Something who stands for 0 but "embraces" 1
+```
+
+This also allows expression positions that are co-dependingly "stuck in inauthenticity":
+
+```text
+0 ?0 = Somebody who "oppresses" `1 ?1`
+1 ?1 = Somebody who are "oppressed by" `0 ?0`
+```
+
 ### Example: Hello Joker
 
 ```rust
