@@ -6,7 +6,7 @@ An implementation of Joker Calculus in Rust
 Based on paper [Joker Calculus](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/joker-calculus.pdf),
 by Daniel Fischer, William Alexander Morris and Sven Nilsen (2021).
 
-![Plato](https://upload.wikimedia.org/wikipedia/commons/7/7d/Head_Platon_Glyptothek_Munich_548.jpg)
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Head_Platon_Glyptothek_Munich_548.jpg" width="300" alt="Plato" />
 *Plato, an influential figure in Western philosophy. [Source](https://en.wikipedia.org/wiki/Platonism#/media/File:Head_Platon_Glyptothek_Munich_548.jpg)*
 
 ### Example: Hello Joker
