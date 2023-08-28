@@ -51,8 +51,8 @@ These operators are used to build more complex expressions, such as:
 This also allows expression positions that are co-dependingly "stuck in inauthenticity":
 
 ```text
-0 ?0 = Somebody who "oppresses" `1 ?1`
-1 ?1 = Somebody who are "oppressed by" `0 ?0`
+!(1 ?0) = 0 ?0 = Somebody who "oppresses" `1 ?1`
+!(0 ?1) = 1 ?1 = Somebody who are "oppressed by" `0 ?0`
 ```
 
 ### Example: Hello Joker
