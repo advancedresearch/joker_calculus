@@ -12,6 +12,18 @@ by Daniel Fischer, William Alexander Morris and Sven Nilsen (2021).
 
 *Plato, an influential figure in Western philosophy. [Source](https://en.wikipedia.org/wiki/Platonism#/media/File:Head_Platon_Glyptothek_Munich_548.jpg)*
 
+### Example: Hello Joker
+
+```rust
+use joker_calculus::*;
+
+fn main() {
+    let a = platonism();
+    let b = not(a.clone());
+    assert_eq!(b.eval_closed(), seshatism());
+}
+```
+
 ### Introduction
 
 Joker Calculus is used to describe language bias in philosophical positions.
@@ -46,7 +58,7 @@ There is also a perspective operator:
 These operators are used to build more complex expressions, such as:
 
 ```text
-0 ?1 = 0 (in Closed Variant) = Something who stands for 1 but "embraces" 0
+0 ?1 = 0 (in Closed variant) = Something who stands for 1 but "embraces" 0
 1 ?0 = 1 (in Closed variant) = Something who stands for 0 but "embraces" 1
 ```
 
@@ -62,7 +74,7 @@ This also allows expressing positions that are co-dependingly "stuck in inauthen
 [Martin Heidegger](https://en.wikipedia.org/wiki/Martin_Heidegger) thought a lot about "authenticity and "inauthenticity" in Being.
 This idea has been used in Joker Calculus from a Wittgensteinean perspective of the relationship between language and logic.
 
-In Joker Calculus, one says a language bias is "inauthentic" if it contains a Joker after being evaluated in the Closed Variant.
+In Joker Calculus, one says a language bias is "inauthentic" if it contains a Joker after being evaluated in the Closed variant.
 This means, the language can not get rid of some internal boundary between two languages of different biases.
 
 For example, when I see your position `0` from my position `1`, I can express this as `1 0`.
@@ -72,26 +84,25 @@ However, when I pretend to have some position `0` while actually having a positi
 this is considered an inauthentic position, since it can be expressed as `(1, 0) = ?1`.
 This language bias is inauthentic because it contains a Joker.
 
-A third example is when I "embrace" a position `0` while holding a position `1`, which is expressed as `0 ?1 = 0` in the Closed Variant.
+A third example is when I "embrace" a position `0` while holding a position `1`, which is expressed as `0 ?1 = 0` in the Closed variant.
 
 - I hold the position `1`
 - I appear to hold the position `0`, hence `(1, 0) = ?1`
-- My position is seen from the position `0` as embracing `0`, hence `0 ?1 = 0` in the Closed Variant
+- My position is seen from the position `0` as embracing `0`, hence `0 ?1 = 0` in the Closed variant
 
-Joker Calculus can sometimes get rid of Jokers when evaluating in the Closed Variant.
+Joker Calculus can sometimes get rid of Jokers when evaluating in the Closed variant.
 These positions are considered authentic.
 
-### Example: Hello Joker
+### Identity as evaluation termination
 
-```rust
-use joker_calculus::*;
+The `id` operator preserves the identity of the argument.
 
-fn main() {
-    let a = platonism();
-    let b = not(a.clone());
-    assert_eq!(b.eval_closed(), seshatism());
-}
-```
+For example, `!id(0)` does not evaluate to `1`.
+However, Joker Calculus can still reason about it.
+In the Closed variant, `!!id(0)` becomes `id(0)`.
+
+In philosophy, this corresponds to opaque language bias.
+You can also think of it as treating involutions along an unknown language dimension.
 
 ### Motivation
 
