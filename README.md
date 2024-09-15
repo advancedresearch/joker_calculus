@@ -18,7 +18,7 @@ It generalizes `0` and `1` to `0 1`, `1 0`, `?0`, `?1`, `0 ?0` etc.
 
 This library supports emojis for improving readability and memorization.
 
-| OJC           | Emoji | CJC      | Examples (OJC)                  | * |
+| OJC           | Emoji | CJC      | Examples (OJC)                  | [*] |
 | ------------: |:-----:| -------: | ------------------------------- | - |
 | 0             | 🙂↓/😇 | 0        | 0 0, (0, 0), !1, !!0, !(1 1)    | ✅ |
 | 1             | 🙂↑/😈 | 1        | 1 1, (1, 1), !0, !!1, !(0 0)    | ✅ |
@@ -57,7 +57,7 @@ This library supports emojis for improving readability and memorization.
 | ?1 ???0       | 😍↓/👏 | ?1 ?0    | !(?0 ??0)                       | 🤨 |
 | ?0 ???1       | 😍↑/👋 | ?0 ?1    | !(?1 ??1)                       | 🤨 |
 
-* ✅ = stable, 🤨 = emoji might change, ❓ = rules might change
+[*] ✅ = stable, 🤨 = emoji might change, ❓ = rules might change
 
 ### Example: Hello Joker
 
