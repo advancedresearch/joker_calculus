@@ -1,4 +1,5 @@
 #![deny(missing_docs)]
+#![doc = include_str!("../README.md")]
 
 /*!
 # Joker Calculus
@@ -743,6 +744,74 @@ pub fn id<T: Into<Expr>>(a: T) -> Expr {
 /// Shorthand syntax for Joker Calculus expression.
 #[macro_export]
 macro_rules! jc (
+    ( "😇" ) => {platonism()};
+    ( "🙂↓" ) => {platonism()};
+    ( "😈" ) => {seshatism()};
+    ( "🙂↑" ) => {seshatism()};
+    ( "🧐↓" ) => {seshatic(platonism())};
+    ( "😎" ) => {seshatic(platonism())};
+    ( "🧐↑" ) => {platonic(seshatism())};
+    ( "🤯" ) => {platonic(seshatism())};
+    ( "🤡↓" ) => {joker(platonism())};
+    ( "🥸" ) => {joker(platonism())};
+    ( "🤡↑" ) => {joker(seshatism())};
+    ( "🤥" ) => {joker(seshatism())};
+    ( "😡↓" ) => {platonic(joker(platonism()))};
+    ( "😭" ) => {platonic(joker(platonism()))};
+    ( "😡↑" ) => {seshatic(joker(seshatism()))};
+    ( "😤" ) => {seshatic(joker(seshatism()))};
+    ( "🤗↓" ) => {seshatic(joker(platonism()))};
+    ( "🥳" ) => {seshatic(joker(platonism()))};
+    ( "🤗↑" ) => {platonic(joker(seshatism()))};
+    ( "🤩" ) => {platonic(joker(seshatism()))};
+    ( "😂↓" ) => {seq(joker(platonism()), platonism())};
+    ( "🥹" ) => {seq(joker(platonism()), platonism())};
+    ( "😂↑" ) => {seq(joker(seshatism()), seshatism())};
+    ( "😝" ) => {seq(joker(seshatism()), seshatism())};
+    ( "😢↓" ) => {seq(joker(seshatism()), platonism())};
+    ( "😱" ) => {seq(joker(seshatism()), platonism())};
+    ( "😢↑" ) => {seq(joker(platonism()), seshatism())};
+    ( "😰" ) => {seq(joker(platonism()), seshatism())};
+    ( "😅↓" ) => {seq(joker(seshatism()), joker(platonism()))};
+    ( "😬" ) => {seq(joker(seshatism()), joker(platonism()))};
+    ( "😅↑" ) => {seq(joker(platonism()), joker(seshatism()))};
+    ( "🫤" ) => {seq(joker(platonism()), joker(seshatism()))};
+    ( "😄↓" ) => {seq(platonic(joker(platonism())), platonism())};
+    ( "🤑" ) => {seq(platonic(joker(platonism())), platonism())};
+    ( "😄↑" ) => {seq(seshatic(joker(seshatism())), seshatism())};
+    ( "🤠" ) => {seq(seshatic(joker(seshatism())), seshatism())};
+    ( "😘↓" ) => {seq(seshatic(joker(platonism())), platonism())};
+    ( "😴" ) => {seq(seshatic(joker(platonism())), platonism())};
+    ( "😘↑" ) => {seq(platonic(joker(seshatism())), seshatism())};
+    ( "😪" ) => {seq(platonic(joker(seshatism())), seshatism())};
+    ( "😜↓" ) => {joker(joker(platonism()))};
+    ( "🤫" ) => {joker(joker(platonism()))};
+    ( "🤪↓" ) => {joker(joker(joker(platonism())))};
+    ( "👻" ) => {joker(joker(joker(platonism())))};
+    ( "🤪↑" ) => {joker(joker(joker(seshatism())))};
+    ( "👽" ) => {joker(joker(joker(seshatism())))};
+    ( "😋↓" ) => {platonic(joker(joker(platonism())))};
+    ( "👎" ) => {platonic(joker(joker(platonism())))};
+    ( "😋↑" ) => {seshatic(joker(joker(seshatism())))};
+    ( "👍" ) => {seshatic(joker(joker(seshatism())))};
+    ( "🤓↓" ) => {seshatic(joker(joker(platonism())))};
+    ( "👌" ) => {seshatic(joker(joker(platonism())))};
+    ( "🤓↑" ) => {platonic(joker(joker(seshatism())))};
+    ( "🖖" ) => {platonic(joker(joker(seshatism())))};
+    ( "🤬↓" ) => {platonic(joker(joker(joker(platonism()))))};
+    ( "👊" ) => {platonic(joker(joker(joker(platonism()))))};
+    ( "🤬↑" ) => {seshatic(joker(joker(joker(seshatism()))))};
+    ( "🦶" ) => {seshatic(joker(joker(joker(seshatism()))))};
+    ( "🥰↓" ) => {seshatic(joker(joker(joker(platonism()))))};
+    ( "🤝" ) => {seshatic(joker(joker(joker(platonism()))))};
+    ( "🥰↑" ) => {platonic(joker(joker(joker(seshatism()))))};
+    ( "🤘" ) => {platonic(joker(joker(joker(seshatism()))))};
+    ( "🤣↓" ) => {seq(joker(platonism()), joker(joker(platonism())))};
+    ( "😁" ) => {seq(joker(platonism()), joker(joker(platonism())))};
+    ( "😍↓" ) => {seq(joker(seshatism()), joker(joker(joker(platonism()))))};
+    ( "👏" ) => {seq(joker(seshatism()), joker(joker(joker(platonism()))))};
+    ( "😍↑" ) => {seq(joker(platonism()), joker(joker(joker(seshatism()))))};
+    ( "👋" ) => {seq(joker(platonism()), joker(joker(joker(seshatism()))))};
     ( 0 ) => {platonism()};
     ( 1 ) => {seshatism()};
     ( id ( $($x:tt)+ ) ) => {id(jc!($($x)+))};
@@ -1179,5 +1248,224 @@ mod tests {
 
         let a = jc!(id((0, 1)));
         assert_eq!(a.layers(), vec![jc!(id((0, 1)))]);
+    }
+
+    #[test]
+    fn test_emoji() {
+        let a = jc!("🙂↓");
+        assert_eq!(a, platonism());
+
+        let a = jc!("🙂↓" "😇");
+        assert_eq!(a, seq(platonism(), platonism()));
+
+        let a = jc!("😇");
+        assert_eq!(a, platonism());
+
+        let a = jc!("😇" "😇");
+        assert_eq!(a, seq(platonism(), platonism()));
+
+        let a = jc!("🙂↑");
+        assert_eq!(a, seshatism());
+
+        let a = jc!("🙂↑" "😇");
+        assert_eq!(a, seq(seshatism(), platonism()));
+
+        let a = jc!("😈");
+        assert_eq!(a, seshatism());
+
+        let a = jc!("😈" "😇");
+        assert_eq!(a, seq(seshatism(), platonism()));
+
+        let a = jc!("🧐↓");
+        assert_eq!(a, seshatic(platonism()));
+
+        let a = jc!("🧐↓" "😇");
+        assert_eq!(a, seq(seshatic(platonism()), platonism()));
+
+        let a = jc!("😎");
+        assert_eq!(a, seshatic(platonism()));
+
+        let a = jc!("🧐↑");
+        assert_eq!(a, platonic(seshatism()));
+
+        let a = jc!("🤯");
+        assert_eq!(a, platonic(seshatism()));
+
+        let a = jc!("🤡↓");
+        assert_eq!(a, joker(platonism()));
+
+        let a = jc!("🥸");
+        assert_eq!(a, joker(platonism()));
+
+        let a = jc!("🤡↑");
+        assert_eq!(a, joker(seshatism()));
+
+        let a = jc!("🤥");
+        assert_eq!(a, joker(seshatism()));
+
+        let a = jc!("😡↓");
+        assert_eq!(a, platonic(joker(platonism())));
+
+        let a = jc!("😭");
+        assert_eq!(a, platonic(joker(platonism())));
+
+        let a = jc!("😡↑");
+        assert_eq!(a, seshatic(joker(seshatism())));
+
+        let a = jc!("😤");
+        assert_eq!(a, seshatic(joker(seshatism())));
+
+        let a = jc!("🤗↓");
+        assert_eq!(a, seshatic(joker(platonism())));
+
+        let a = jc!("🥳");
+        assert_eq!(a, seshatic(joker(platonism())));
+
+        let a = jc!("🤗↑");
+        assert_eq!(a, platonic(joker(seshatism())));
+
+        let a = jc!("🤩");
+        assert_eq!(a, platonic(joker(seshatism())));
+
+        let a = jc!("😂↓");
+        assert_eq!(a, seq(joker(platonism()), platonism()));
+
+        let a = jc!("🥹");
+        assert_eq!(a, seq(joker(platonism()), platonism()));
+
+        let a = jc!("😂↑");
+        assert_eq!(a, seq(joker(seshatism()), seshatism()));
+
+        let a = jc!("😝");
+        assert_eq!(a, seq(joker(seshatism()), seshatism()));
+
+        let a = jc!("😢↓");
+        assert_eq!(a, seq(joker(seshatism()), platonism()));
+
+        let a = jc!("😱");
+        assert_eq!(a, seq(joker(seshatism()), platonism()));
+
+        let a = jc!("😢↑");
+        assert_eq!(a, seq(joker(platonism()), seshatism()));
+
+        let a = jc!("😰");
+        assert_eq!(a, seq(joker(platonism()), seshatism()));
+
+        let a = jc!("😅↓");
+        assert_eq!(a, seq(joker(seshatism()), joker(platonism())));
+
+        let a = jc!("😬");
+        assert_eq!(a, seq(joker(seshatism()), joker(platonism())));
+
+        let a = jc!("😅↑");
+        assert_eq!(a, seq(joker(platonism()), joker(seshatism())));
+
+        let a = jc!("🫤");
+        assert_eq!(a, seq(joker(platonism()), joker(seshatism())));
+
+        let a = jc!("😄↓");
+        assert_eq!(a, seq(platonic(joker(platonism())), platonism()));
+
+        let a = jc!("🤑");
+        assert_eq!(a, seq(platonic(joker(platonism())), platonism()));
+
+        let a = jc!("😄↑");
+        assert_eq!(a, seq(seshatic(joker(seshatism())), seshatism()));
+
+        let a = jc!("🤠");
+        assert_eq!(a, seq(seshatic(joker(seshatism())), seshatism()));
+
+        let a = jc!("😘↓");
+        assert_eq!(a, seq(seshatic(joker(platonism())), platonism()));
+
+        let a = jc!("😴");
+        assert_eq!(a, seq(seshatic(joker(platonism())), platonism()));
+
+        let a = jc!("😘↑");
+        assert_eq!(a, seq(platonic(joker(seshatism())), seshatism()));
+
+        let a = jc!("😜↓");
+        assert_eq!(a, joker(joker(platonism())));
+
+        let a = jc!("🤫");
+        assert_eq!(a, joker(joker(platonism())));
+
+        let a = jc!("🤪↓");
+        assert_eq!(a, joker(joker(joker(platonism()))));
+
+        let a = jc!("👻");
+        assert_eq!(a, joker(joker(joker(platonism()))));
+
+        let a = jc!("🤪↑");
+        assert_eq!(a, joker(joker(joker(seshatism()))));
+
+        let a = jc!("👽");
+        assert_eq!(a, joker(joker(joker(seshatism()))));
+
+        let a = jc!("😋↓");
+        assert_eq!(a, platonic(joker(joker(platonism()))));
+
+        let a = jc!("👎");
+        assert_eq!(a, platonic(joker(joker(platonism()))));
+
+        let a = jc!("😋↑");
+        assert_eq!(a, seshatic(joker(joker(seshatism()))));
+
+        let a = jc!("👍");
+        assert_eq!(a, seshatic(joker(joker(seshatism()))));
+
+        let a = jc!("🤓↓");
+        assert_eq!(a, seshatic(joker(joker(platonism()))));
+
+        let a = jc!("👌");
+        assert_eq!(a, seshatic(joker(joker(platonism()))));
+
+        let a = jc!("🤓↑");
+        assert_eq!(a, platonic(joker(joker(seshatism()))));
+
+        let a = jc!("🖖");
+        assert_eq!(a, platonic(joker(joker(seshatism()))));
+
+        let a = jc!("🤬↓");
+        assert_eq!(a, platonic(joker(joker(joker(platonism())))));
+
+        let a = jc!("👊");
+        assert_eq!(a, platonic(joker(joker(joker(platonism())))));
+
+        let a = jc!("🤬↑");
+        assert_eq!(a, seshatic(joker(joker(joker(seshatism())))));
+
+        let a = jc!("🦶");
+        assert_eq!(a, seshatic(joker(joker(joker(seshatism())))));
+
+        let a = jc!("🥰↓");
+        assert_eq!(a, seshatic(joker(joker(joker(platonism())))));
+
+        let a = jc!("🤝");
+        assert_eq!(a, seshatic(joker(joker(joker(platonism())))));
+
+        let a = jc!("🥰↑");
+        assert_eq!(a, platonic(joker(joker(joker(seshatism())))));
+
+        let a = jc!("🤘");
+        assert_eq!(a, platonic(joker(joker(joker(seshatism())))));
+
+        let a = jc!("🤣↓");
+        assert_eq!(a, seq(joker(platonism()), joker(joker(platonism()))));
+
+        let a = jc!("😁");
+        assert_eq!(a, seq(joker(platonism()), joker(joker(platonism()))));
+
+        let a = jc!("😍↓");
+        assert_eq!(a, seq(joker(seshatism()), joker(joker(joker(platonism())))));
+
+        let a = jc!("👏");
+        assert_eq!(a, seq(joker(seshatism()), joker(joker(joker(platonism())))));
+
+        let a = jc!("😍↑");
+        assert_eq!(a, seq(joker(platonism()), joker(joker(joker(seshatism())))));
+
+        let a = jc!("👋");
+        assert_eq!(a, seq(joker(platonism()), joker(joker(joker(seshatism())))));
     }
 }

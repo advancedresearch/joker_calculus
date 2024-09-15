@@ -9,6 +9,56 @@ by Daniel Fischer, William Alexander Morris and Sven Nilsen (2021).
 
 *Plato, an influential figure in Western philosophy. [Source](https://en.wikipedia.org/wiki/Platonism#/media/File:Head_Platon_Glyptothek_Munich_548.jpg)*
 
+### What is Joker Calculus?
+
+Joker Calculus is a formal language that can describe higher dualities.  
+It generalizes `0` and `1` to `0 1`, `1 0`, `?0`, `?1`, `0 ?0` etc.  
+
+### Cheat sheet
+
+This library supports emojis for improving readability and memorization.
+
+| OJC           | Emoji | CJC      | Examples (OJC)                  | * |
+| ------------: |:-----:| -------: | ------------------------------- | - |
+| 0             | 🙂↓/😇 | 0        | 0 0, (0, 0), !1, !!0, !(1 1)    | ✅ |
+| 1             | 🙂↑/😈 | 1        | 1 1, (1, 1), !0, !!1, !(0 0)    | ✅ |
+| 1 0           | 🧐↓/😎 | 1 0      | (1 1) 0, 1 (1 0)                | 🤨 |
+| 0 1           | 🧐↑/🤯 | 0 1      | (0 0) 1, 0 (0 1)                | 🤨 |
+| ?0            | 🤡↓/🥸 | ?0       | (0, 1), !?1, ?0 ?0, !(?1 0)     | 🤨 |
+| ?1            | 🤡↑/🤥 | ?1       | (1, 0), !?0, ?1 ?1, !(?0 1)     | 🤨 |
+| 0 ?0          | 😡↓/😭 | 0 ?0     | !(1 0)                          | 🤨 |
+| 1 ?1          | 😡↑/😤 | 1 ?1     | !(0 1)                          | 🤨 |
+| 1 ?0          | 🤗↓/🥳 | 1        | (1 1) ?0                        | 🤨 |
+| 0 ?1          | 🤗↑/🤩 | 0        | (0 0) ?1                        | 🤨 |
+| ?0 0          | 😂↓/🥹 | ?0 0     | !?1 0                           | 🤨 |
+| ?1 1          | 😂↑/😝 | ?1 1     | !?0 1                           | 🤨 |
+| ?1 0          | 😢↓/😱 | ?1 0     | !?0 0                           | 🤨 |
+| ?0 1          | 😢↑/😰 | ?0 1     | !?1 1                           | 🤨 |
+| ?1 ?0         | 😅↓/😬 | ?1 ?0    | !(?0 0)                         | 🤨 |
+| ?0 ?1         | 😅↑/🫤 | ?0 ?1    | !(?1 1)                         | 🤨 |
+| (0 ?0) 0      | 😄↓/🤑 | (0 ?0) 0 | 0 (?0 0)                        | 🤨 |
+| (1 ?1) 1      | 😄↑/🤠 | (1 ?1) 1 | 1 (?1 1)                        | 🤨 |
+| (1 ?0) 0      | 😘↓/😴 | 1 0      | 1 (?0 0)                        | 🤨 |
+| (0 ?1) 1      | 😘↑/😪 | 0 1      | 0 (?1 1)                        | 🤨 |
+| ??0           | 😜↓/🤫 | 0        | (?0, ?1), ?(0, 1)               | 🤨 |
+| ??1           | 😜↑/🫢 | 1        | (?1, ?0), ?(1, 0)               | 🤨 |
+| ???0          | 🤪↓/👻 | ?0       | (??0, ??1)                      | 🤨 |
+| ???1          | 🤪↑/👽 | ?1       | (??1, ??0)                      | 🤨 |
+| 0 ??0         | 😋↓/👎 | 0        | !(1 ?0)                         | 🤨 |
+| 1 ??1         | 😋↑/👍 | 1        | !(0 ?1)                         | 🤨 |
+| 1 ??0         | 🤓↓/👌 | 1 0      | !(0 ?0)                         | 🤨 |
+| 0 ??1         | 🤓↑/🖖 | 0 1      | !(1 ?1)                         | 🤨 |
+| 0 ???0        | 🤬↓/👊 | 0 ?0     | !(1 ??0)                        | 🤨 |
+| 1 ???1        | 🤬↑/🦶 | 1 ?1     | !(0 ??1)                        | 🤨 |
+| 1 ???0        | 🥰↓/🤝 | 1        | !(0 ??1)                        | 🤨 |
+| 0 ???1        | 🥰↑/🤘 | 0        | !(1 ??1)                        | 🤨 |
+| ?0 ??0        | 🤣↓/😁 | ?0 0     | !(?1 ?0)                        | 🤨 |
+| ?1 ??1        | 🤣↑/😆 | ?1 1     | !(?0 ?1)                        | 🤨 |
+| ?1 ???0       | 😍↓/👏 | ?1 ?0    | !(?0 ??0)                       | 🤨 |
+| ?0 ???1       | 😍↑/👋 | ?0 ?1    | !(?1 ??1)                       | 🤨 |
+
+* ✅ = stable, 🤨 = emoji might change, ❓ = rules might change
+
 ### Example: Hello Joker
 
 ```rust
@@ -18,6 +68,52 @@ fn main() {
     let a = platonism();
     let b = not(a.clone());
     assert_eq!(b.eval_closed(), seshatism());
+}
+```
+
+### Example: Emoji
+
+```rust
+use joker_calculus::*;
+
+fn main() {
+    let a = jc!("😇");
+    let b = not(a.clone());
+    assert_eq!(b.eval_closed(), jc!("😈"));
+
+    let a = jc!("👻");
+    let b = not(a.clone());
+    assert_eq!(b.eval_open(), jc!("👽"));
+    assert_eq!(b.eval_closed(), jc!("🤥"));
+
+    let a = jc!("👽");
+    let b = not(a.clone());
+    assert_eq!(b.eval_open(), jc!("👻"));
+    assert_eq!(b.eval_closed(), jc!("🥸"));
+
+    let a = jc!("🤥");
+    let b = not(a.clone());
+    assert_eq!(b.eval_closed(), jc!("🥸"));
+
+    let a = jc!("🥳");
+    let b = not(a.clone());
+    assert_eq!(b.eval_open(), jc!("👎"));
+    assert_eq!(b.eval_closed(), jc!("😇"));
+
+    let a = jc!("🤩");
+    let b = not(a.clone());
+    assert_eq!(b.eval_open(), jc!("👍"));
+    assert_eq!(b.eval_closed(), jc!("😈"));
+
+    let a = jc!("😇" "🤡↑");
+    let b = jc!("😇" "🤥");
+    assert_eq!(a, b);
+
+    let a = jc!(("😇", "😈"));
+    assert_eq!(a.eval_closed(), jc!("🥸"));
+
+    let a = jc!(("😈", "😇"));
+    assert_eq!(a.eval_closed(), jc!("🤥"));
 }
 ```
 
