@@ -330,7 +330,7 @@ impl Expr {
             // `1 => 1`.
             _1 => _1,
             // Terminates evaluation.
-            // `id(x) => id(x)`. 
+            // `id(x) => id(x)`.
             Id(_) => self.clone(),
             Not(a) => match a.eval(closed) {
                 // `!0' => 1`.
@@ -492,7 +492,7 @@ impl Expr {
         while let Some(x) = s.pop() {
             exp = seq(exp, x);
         }
-        
+
         exp
     }
 
@@ -752,10 +752,13 @@ macro_rules! jc (
     ( $x0:tt $x1:tt $x2:tt $x3:tt , $($y:tt)+ ) => {sel(jc!($x0 $x1 $x2 $x3), jc!($($y)+))};
     ( ( $($x:tt)+ ) $($y:tt)+ ) => {seq(jc!($($x)+), jc!($($y)+))};
     ( ( $($x:tt)+ ) ) => {jc!($($x)+)};
+    ( ? ( $($x:tt)+ ) ) => {joker(jc!($($x)+))};
+    ( ? ? $x:tt ) => {joker(joker(jc!($x)))};
+    ( ? $x:tt $($y:tt)+ ) => {seq(joker(jc!($x)), jc!($($y)+))};
     ( ? $($x:tt)+ ) => {joker(jc!($($x)+))};
+    ( ! ? $x:tt $($y:tt)+ ) => {seq(not(joker(jc!($x))), jc!($($y)+))};
     ( ! $($x:tt)+ ) => {not(jc!($($x)+))};
-    ( 0 $($x:tt)+ ) => {platonic(jc!($($x)+))};
-    ( 1 $($x:tt)+ ) => {seshatic(jc!($($x)+))};
+    ( $x:tt $($y:tt)+ ) => {seq(jc!($x), jc!($($y)+))};
 );
 
 #[cfg(test)]
@@ -915,7 +918,7 @@ mod tests {
         let a = not(not(seshatic(sel(platonism(), joker(seshatism())))));
         assert_eq!(a.eval_open(), seshatic(joker(joker(sel(platonism(), joker(seshatism()))))));
         assert_eq!(a.eval_closed(), seshatic(sel(platonism(), joker(seshatism()))));
-    
+
         let a = seq(seshatism(), seshatism());
         assert_eq!(a.eval_open(), seshatism());
         assert_eq!(a.eval_closed(), seshatism());
@@ -931,19 +934,19 @@ mod tests {
         let a = id(platonism());
         assert_eq!(a.eval_open(), id(platonism()));
         assert_eq!(a.eval_closed(), id(platonism()));
-    
+
         let a = id(not(platonism()));
         assert_eq!(a.eval_open(), id(not(platonism())));
         assert_eq!(a.eval_closed(), id(not(platonism())));
-    
+
         let a = not(id(platonism()));
         assert_eq!(a.eval_closed(), not(id(platonism())));
         assert_eq!(a.eval_open(), not(id(platonism())));
-    
+
         let a = sel(id(platonism()), not(id(platonism())));
         assert_eq!(a.eval_closed(), joker(id(platonism())));
         assert_eq!(a.eval_open(), joker(not(not(id(platonism())))));
-    
+
         let a = sel(not(id(platonism())), id(platonism()));
         assert_eq!(a.eval_closed(), joker(not(id(platonism()))));
         assert_eq!(a.eval_open(), joker(not(id(platonism()))));
@@ -951,11 +954,11 @@ mod tests {
         let a = seq(not(platonism()), platonism());
         assert_eq!(a.eval_closed(), seq(seshatism(), platonism()));
         assert_eq!(a.eval_open(), seq(seshatism(), platonism()));
-    
+
         let a = seq(id(platonism()), platonism());
         assert_eq!(a.eval_closed(), seq(id(platonism()), platonism()));
         assert_eq!(a.eval_open(), seq(id(platonism()), platonism()));
-    
+
         let a = seq(platonism(), id(platonism()));
         assert_eq!(a.eval_closed(), seq(platonism(), id(platonism())));
         assert_eq!(a.eval_open(), seq(platonism(), id(platonism())));
@@ -963,7 +966,7 @@ mod tests {
         let a = seq(id(platonism()), id(platonism()));
         assert_eq!(a.eval_closed(), id(platonism()));
         assert_eq!(a.eval_open(), id(platonism()));
-    
+
         // 1 (0 1), 0 1 => (1 0, 0) 1
         let a = sel(seq(_1, seq(_0, _1)), seq(_0, _1));
         assert_eq!(a.eval_closed(), jc!((1 0, 0) 1));
@@ -1068,6 +1071,21 @@ mod tests {
 
         let a = jc!(?0);
         assert_eq!(a, joker(platonism()));
+
+        let a = jc!(?0 0);
+        assert_eq!(a, seq(joker(platonism()), platonism()));
+
+        let a = jc!(?0 ?1);
+        assert_eq!(a, seq(joker(platonism()), joker(seshatism())));
+
+        let a = jc!(?0 ??0);
+        assert_eq!(a, seq(joker(platonism()), joker(joker(platonism()))));
+
+        let a = jc!(!(?1 0));
+        assert_eq!(a, not(seq(joker(seshatism()), platonism())));
+
+        let a = jc!(!?1 0);
+        assert_eq!(a, seq(not(joker(seshatism())), platonism()));
 
         let a = jc!(0 ?0);
         assert_eq!(a, platonic(joker(platonism())));
