@@ -14,6 +14,13 @@ by Daniel Fischer, William Alexander Morris and Sven Nilsen (2021).
 Joker Calculus is a formal language that can describe higher dualities.  
 It generalizes `0` and `1` to `0 1`, `1 0`, `?0`, `?1`, `0 ?0` etc.  
 
+There are two binary operators in Joker Calculus from which all expressions are built:
+
+- `(<depth>, <surface>)`
+- `<perspective> <ground>`
+
+A "Joker" in Joker Calculus `?x` is syntax sugar for `(x, !x)`.
+
 ### Cheat sheet
 
 This library supports emojis for improving readability and memorization.
